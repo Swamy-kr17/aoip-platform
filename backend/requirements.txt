@@ -9,3 +9,5 @@ langchain
 langgraph
 psutil
 sqlalchemy
+sqlalchemy
+psycopg2-binary

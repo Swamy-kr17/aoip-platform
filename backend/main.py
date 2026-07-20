@@ -8,6 +8,7 @@ from database.base import Base
 from models.agent import Agent
 from models.task import Task
 from api.agents import router as agents_router
+from api.chat import router as chat_router
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
@@ -21,6 +22,7 @@ app.include_router(monitor_router)
 app.include_router(health_router)
 app.include_router(agents_router)
 app.include_router(task_router)
+app.include_router(chat_router)
 @app.get("/")
 def home():
     return {

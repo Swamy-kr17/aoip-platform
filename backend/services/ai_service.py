@@ -1,16 +1,10 @@
-from providers.gemini_provider import GeminiProvider
+from services.provider_factory import ProviderFactory
 
 
 class AIService:
-    """
-    Manages AI providers and handles AI requests.
-    """
 
-    def __init__(self):
-        self.provider = GeminiProvider()
+    def ask_ai(self, provider_name: str, prompt: str) -> str:
 
-    def ask_ai(self, prompt: str) -> str:
-        """
-        Sends the prompt to the configured AI provider.
-        """
-        return self.provider.generate_response(prompt)
+        provider = ProviderFactory.get_provider(provider_name)
+
+        return provider.generate_response(prompt)

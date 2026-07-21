@@ -23,6 +23,7 @@ app.include_router(health_router)
 app.include_router(agents_router)
 app.include_router(task_router)
 app.include_router(chat_router)
+
 @app.get("/")
 def home():
     return {

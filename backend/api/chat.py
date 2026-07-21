@@ -10,5 +10,10 @@ service = AIService()
 
 @router.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
-    answer = service.ask_ai(request.prompt)
+
+    answer = service.ask_ai(
+        request.provider,
+        request.prompt
+    )
+
     return ChatResponse(response=answer)

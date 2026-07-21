@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 
+
 class ChatRequest(BaseModel):
+    provider: str = "gemini"
     prompt: str
 
 

@@ -3,7 +3,8 @@ import requests
 
 class OllamaProvider:
 
-    def generate_response(self, prompt: str) -> str:
+    def generate_response(self, messages) -> str:
+        prompt = messages[-1].content
         url = "http://localhost:11434/api/generate"
 
         payload = {

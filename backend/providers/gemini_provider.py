@@ -8,7 +8,8 @@ class GeminiProvider:
     def __init__(self):
         self.client = genai.Client(api_key=GEMINI_API_KEY)
 
-    def generate_response(self, prompt: str) -> str:
+    def generate_response(self, messages) -> str:
+        prompt = messages[-1].content
         try:
             response = self.client.models.generate_content(
                 model="gemini-flash-lite-latest",

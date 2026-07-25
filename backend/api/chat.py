@@ -13,7 +13,8 @@ def chat(request: ChatRequest):
 
     answer = service.ask_ai(
         request.provider,
-        request.messages
+        request.messages,
+        request.system_prompt
     )
 
     return ChatResponse(response=answer)

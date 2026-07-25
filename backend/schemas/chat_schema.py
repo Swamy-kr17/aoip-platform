@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -9,6 +9,7 @@ class Message(BaseModel):
 
 class ChatRequest(BaseModel):
     provider: str = "gemini"
+    system_prompt: Optional[str] = None
     messages: List[Message]
 
 

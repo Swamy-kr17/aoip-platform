@@ -8,7 +8,7 @@ class OpenAIProvider:
     def __init__(self):
         self.client = OpenAI(api_key=OPENAI_API_KEY)
 
-    def generate_response(self, messages) -> str:
+    def generate_response(self, messages, system_prompt=None):
         prompt = messages[-1].content
         try:
             response = self.client.responses.create(

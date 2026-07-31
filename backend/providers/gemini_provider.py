@@ -16,6 +16,7 @@ class GeminiProvider:
 
             for message in messages:
                 prompt += f"{message.role.capitalize()}: {message.content}\n"
+                prompt += "Assistant:"
 
             # Build config
             if system_prompt:
@@ -34,8 +35,10 @@ class GeminiProvider:
 
             return response.text
 
-        except errors.ServerError:
-            return "Gemini is currently busy. Please try again in a few moments."
+        except errors.ServerError as e:
+            print("Gemini Server Error:", e)
+            return f"Gemini Server Error: {e}"
 
         except Exception as e:
+            print("General Error:", repr(e))
             return f"Error: {e}"

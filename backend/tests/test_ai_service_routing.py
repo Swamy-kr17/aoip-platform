@@ -30,11 +30,17 @@ class AIServiceRoutingTests(unittest.TestCase):
     def test_auto_routes_summarization_to_gemini(self):
         self.assert_selected_provider("auto", "Summarize this document", "gemini")
 
-    def test_auto_routes_general_to_ollama(self):
-        self.assert_selected_provider("auto", "Tell me a fun fact", "ollama")
+    def test_auto_routes_writing_to_openrouter(self):
+        self.assert_selected_provider("auto", "Write a poem", "openrouter")
+
+    def test_auto_routes_reasoning_to_openrouter(self):
+        self.assert_selected_provider("auto", "Explain gravity", "openrouter")
+
+    def test_auto_routes_general_to_openrouter(self):
+        self.assert_selected_provider("auto", "Tell me a fun fact", "openrouter")
 
     def test_manual_provider_overrides_recommendation(self):
-        for provider_name in ("ollama", "gemini", "openai"):
+        for provider_name in ("ollama", "gemini", "openai", "openrouter"):
             with self.subTest(provider_name=provider_name):
                 self.assert_selected_provider(
                     provider_name,

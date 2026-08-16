@@ -45,4 +45,4 @@ class TaskAnalyzer:
             return "gemini"
 
         else:
-            return "ollama"
+            return "openrouter"

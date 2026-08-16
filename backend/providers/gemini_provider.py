@@ -2,11 +2,27 @@ from google import genai
 from google.genai import types, errors
 
 from config import GEMINI_API_KEY
+from providers.exceptions import (
+    ProviderAuthenticationError,
+    ProviderConfigurationError,
+    ProviderDownstreamError,
+    ProviderRateLimitError,
+    ProviderUnavailableError,
+)
 
 
 class GeminiProvider:
     def __init__(self):
-        self.client = genai.Client(api_key=GEMINI_API_KEY)
+        if not GEMINI_API_KEY:
+            raise ProviderConfigurationError("Gemini provider is not configured.")
+
+        try:
+            self.client = genai.Client(api_key=GEMINI_API_KEY)
+        except Exception as error:
+            raise ProviderConfigurationError(
+                "Gemini provider is not configured."
+            ) from error
+
         self.model = "gemini-3.5-flash"
 
     def generate_response(self, messages, system_prompt):
@@ -35,10 +51,32 @@ class GeminiProvider:
 
             return response.text
 
-        except errors.ServerError as e:
-            print("Gemini Server Error:", e)
-            return f"Gemini Server Error: {e}"
+        except errors.ServerError as error:
+            raise ProviderUnavailableError(
+                "Gemini provider is temporarily unavailable."
+            ) from error
 
-        except Exception as e:
-            print("General Error:", repr(e))
-            return f"Error: {e}"
+        except errors.ClientError as error:
+            if error.code == 429:
+                raise ProviderRateLimitError(
+                    "Gemini provider rate limit was reached."
+                ) from error
+
+            if error.code in (401, 403):
+                raise ProviderAuthenticationError(
+                    "Gemini provider authentication failed."
+                ) from error
+
+            raise ProviderDownstreamError(
+                "Gemini provider returned an unexpected error."
+            ) from error
+
+        except errors.APIError as error:
+            raise ProviderDownstreamError(
+                "Gemini provider returned an unexpected error."
+            ) from error
+
+        except Exception as error:
+            raise ProviderDownstreamError(
+                "Gemini provider returned an unexpected error."
+            ) from error

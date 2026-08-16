@@ -1,5 +1,5 @@
-from typing import List, Optional
-from pydantic import BaseModel
+from typing import List, Literal, Optional
+from pydantic import BaseModel, Field
 
 
 class Message(BaseModel):
@@ -8,9 +8,9 @@ class Message(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    provider: str = "gemini"
+    provider: Literal["auto", "gemini", "openai", "ollama"] = "gemini"
     system_prompt: Optional[str] = None
-    messages: List[Message]
+    messages: List[Message] = Field(min_length=1)
 
 
 class ChatResponse(BaseModel):

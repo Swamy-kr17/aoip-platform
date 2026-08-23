@@ -32,11 +32,16 @@ class OpenAIProvider:
             ) from error
 
     def generate_response(self, messages, system_prompt=None):
-        prompt = messages[-1].content
+        conversation = []
+
+        for message in messages:
+            conversation.append({"role": message.role, "content": message.content})
+
         try:
             response = self.client.responses.create(
                 model="gpt-5.5",
-                input=prompt
+                input=conversation,
+                instructions=system_prompt or None,
             )
             return response.output_text
 

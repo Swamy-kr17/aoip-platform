@@ -7,6 +7,7 @@ class Message(BaseModel):
     content: str
 
 
+
 class ChatRequest(BaseModel):
     provider: Literal["auto", "gemini", "openai", "ollama", "openrouter"] = "gemini"
     system_prompt: Optional[str] = None
@@ -15,3 +16,6 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
+    task_detected: Optional[str] = None
+    provider_used: Optional[str] = None
+    routing_mode: Optional[str] = None

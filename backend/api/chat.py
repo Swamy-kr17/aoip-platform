@@ -18,7 +18,7 @@ service = AIService()
 @router.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     try:
-        answer = service.ask_ai(
+        result = service.ask_ai(
             request.provider,
             request.messages,
             request.system_prompt
@@ -44,4 +44,9 @@ def chat(request: ChatRequest):
             detail="AI provider returned an unexpected error."
         ) from error
 
-    return ChatResponse(response=answer)
+    return ChatResponse(
+        response=result["response"],
+        task_detected=result["task_detected"],
+        provider_used=result["provider_used"],
+        routing_mode=result["routing_mode"],
+    )

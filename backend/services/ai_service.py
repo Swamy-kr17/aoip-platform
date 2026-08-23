@@ -1,6 +1,6 @@
 from services.provider_factory import ProviderFactory
 from services.task_analyzer import TaskAnalyzer
-from providers.exceptions import ProviderRateLimitError, ProviderUnavailableError
+from providers.exceptions import ProviderConfigurationError, ProviderRateLimitError, ProviderUnavailableError
 
 
 class AIService:
@@ -24,7 +24,13 @@ class AIService:
 
         if provider_name.lower() != "auto":
             provider = ProviderFactory.get_provider(provider_name)
-            return provider.generate_response(messages, system_prompt)
+            response_text = provider.generate_response(messages, system_prompt)
+            return {
+                "response":      response_text,
+                "task_detected": task,
+                "provider_used": provider_name.lower(),
+                "routing_mode":  "manual",
+            }
 
         providers_to_try = [recommended_provider]
         for fallback_provider in self.AUTO_FALLBACK_PROVIDERS[task]:
@@ -34,7 +40,13 @@ class AIService:
         for index, selected_provider in enumerate(providers_to_try):
             try:
                 provider = ProviderFactory.get_provider(selected_provider)
-                return provider.generate_response(messages, system_prompt)
-            except (ProviderUnavailableError, ProviderRateLimitError):
+                response_text = provider.generate_response(messages, system_prompt)
+                return {
+                    "response":      response_text,
+                    "task_detected": task,
+                    "provider_used": selected_provider,
+                    "routing_mode":  "auto",
+                }
+            except (ProviderUnavailableError, ProviderRateLimitError, ProviderConfigurationError):
                 if index == len(providers_to_try) - 1:
                     raise

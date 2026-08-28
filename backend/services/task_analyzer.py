@@ -33,16 +33,3 @@ class TaskAnalyzer:
             return "reasoning"
 
         return "general"
-
-    def recommend_provider(self, task):
-        if task == "coding":
-            return "openai"
-
-        elif task == "translation":
-            return "gemini"
-
-        elif task == "summarization":
-            return "gemini"
-
-        else:
-            return "openrouter"

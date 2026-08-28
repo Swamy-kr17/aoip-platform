@@ -1,26 +1,17 @@
 from services.provider_factory import ProviderFactory
+from services.provider_registry import ProviderRegistry
 from services.task_analyzer import TaskAnalyzer
 from providers.exceptions import ProviderConfigurationError, ProviderDownstreamError, ProviderRateLimitError, ProviderUnavailableError
 
 
 class AIService:
-    AUTO_FALLBACK_PROVIDERS = {
-        "coding": ["openrouter", "ollama"],
-        "translation": ["openrouter", "ollama"],
-        "summarization": ["openrouter", "ollama"],
-        "writing": ["ollama", "gemini"],
-        "reasoning": ["ollama", "gemini"],
-        "general": ["ollama", "gemini"],
-    }
 
     def ask_ai(self, provider_name, messages, system_prompt):
         analyzer = TaskAnalyzer()
 
         task = analyzer.analyze(messages)
-        recommended_provider = analyzer.recommend_provider(task)
 
-        print(f"[AOIP] Detected task:        {task}")
-        print(f"[AOIP] Recommended provider: {recommended_provider}")
+        print(f"[AOIP] Detected task: {task}")
 
         if provider_name.lower() != "auto":
             print(f"[AOIP] Routing mode: manual → using provider: {provider_name.lower()}")
@@ -33,12 +24,9 @@ class AIService:
                 "routing_mode":  "manual",
             }
 
-        providers_to_try = [recommended_provider]
-        for fallback_provider in self.AUTO_FALLBACK_PROVIDERS[task]:
-            if fallback_provider not in providers_to_try:
-                providers_to_try.append(fallback_provider)
+        providers_to_try = ProviderRegistry.get_providers_for_task(task)
 
-        print(f"[AOIP] Routing mode: auto → will try: {providers_to_try}")
+        print(f"[AOIP] Routing mode: auto → registry order for '{task}': {providers_to_try}")
 
         for index, selected_provider in enumerate(providers_to_try):
             print(f"[AOIP] Trying provider: {selected_provider}")
@@ -57,4 +45,3 @@ class AIService:
                 if index == len(providers_to_try) - 1:
                     print(f"[AOIP] All providers exhausted. Raising final error.")
                     raise
-
